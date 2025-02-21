@@ -3,12 +3,14 @@ package main
 import (
 	"log"
 	"task_manager/internal/database"
+	"task_manager/internal/middleware"
 	"task_manager/internal/routes"
+
+	_ "task_manager/cmd/docs"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	_ "task_manager/cmd/docs"
 )
 
 // @title        Task Manager API
@@ -20,6 +22,7 @@ func main() {
 	db := database.InitDB()
 
 	r := gin.Default()
+	r.Use(middleware.CORSMiddleware())
 
 	routes.SetupRoutes(r, db)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

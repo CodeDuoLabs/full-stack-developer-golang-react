@@ -37,11 +37,11 @@ import type {
 export const getTasks = (
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<GetTasks200>> => {
-  return axios.default.get(`/tasks`, options);
+  return axios.default.get(`http://localhost:8080/tasks`, options);
 };
 
 export const getGetTasksQueryKey = () => {
-  return [`/tasks`] as const;
+  return [`http://localhost:8080/tasks`] as const;
 };
 
 export const getGetTasksQueryOptions = <
@@ -157,7 +157,7 @@ export const postTasks = (
   modelTask: ModelTask,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<PostTasks201>> => {
-  return axios.default.post(`/tasks`, modelTask, options);
+  return axios.default.post(`http://localhost:8080/tasks`, modelTask, options);
 };
 
 export const getPostTasksMutationOptions = <
@@ -238,11 +238,11 @@ export const getTasksId = (
   id: string,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<GetTasksId200>> => {
-  return axios.default.get(`/tasks/${id}`, options);
+  return axios.default.get(`http://localhost:8080/tasks/${id}`, options);
 };
 
 export const getGetTasksIdQueryKey = (id: string) => {
-  return [`/tasks/${id}`] as const;
+  return [`http://localhost:8080/tasks/${id}`] as const;
 };
 
 export const getGetTasksIdQueryOptions = <
@@ -379,7 +379,11 @@ export const putTasksId = (
   modelTask: ModelTask,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<PutTasksId200>> => {
-  return axios.default.put(`/tasks/${id}`, modelTask, options);
+  return axios.default.put(
+    `http://localhost:8080/tasks/${id}`,
+    modelTask,
+    options,
+  );
 };
 
 export const getPutTasksIdMutationOptions = <
@@ -460,7 +464,7 @@ export const deleteTasksId = (
   id: string,
   options?: AxiosRequestConfig,
 ): Promise<AxiosResponse<TaskManagerInternalResponseResponse>> => {
-  return axios.default.delete(`/tasks/${id}`, options);
+  return axios.default.delete(`http://localhost:8080/tasks/${id}`, options);
 };
 
 export const getDeleteTasksIdMutationOptions = <

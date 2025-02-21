@@ -17,6 +17,7 @@ export default defineConfig({
           includeHttpResponseReturnType: false,
         },
       },
+      baseUrl: `${process.env.API_URL}`,
       allParamsOptional: false,
       unionAddMissingProperties: true,
     },
