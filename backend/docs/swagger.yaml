@@ -1,0 +1,183 @@
+basePath: /
+definitions:
+  models.Task:
+    type: object
+  models.TaskStatus:
+    enum:
+    - Pending
+    - Completed
+    type: string
+    x-enum-varnames:
+    - StatusPending
+    - StatusCompleted
+  response.Response:
+    properties:
+      data: {}
+      error:
+        type: string
+      status:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: A simple task management API built with Go and Gin.
+  title: Task Manager API
+  version: "1.0"
+paths:
+  /tasks:
+    get:
+      description: Retrieves a list of all tasks stored in the database.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of tasks
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Task'
+                  type: array
+              type: object
+        "500":
+          description: Failed to retrieve tasks
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: List all tasks
+      tags:
+      - tasks
+    post:
+      consumes:
+      - application/json
+      description: Creates a task with the provided name and status.
+      parameters:
+      - description: Task object to create
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/models.Task'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created task
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Task'
+              type: object
+        "400":
+          description: Invalid request payload
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Failed to create task
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Create a new task
+      tags:
+      - tasks
+  /tasks/{id}:
+    delete:
+      description: Deletes a task identified by its unique identifier.
+      parameters:
+      - description: Task ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Task deleted successfully
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Failed to delete task
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Delete a task
+      tags:
+      - tasks
+    get:
+      description: Retrieves a task by its unique identifier.
+      parameters:
+      - description: Task ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task details
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Task'
+              type: object
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get a task
+      tags:
+      - tasks
+    put:
+      consumes:
+      - application/json
+      description: Updates the details of a task identified by its ID.
+      parameters:
+      - description: Task ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated task object
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/models.Task'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated task
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Task'
+              type: object
+        "400":
+          description: Invalid request payload
+          schema:
+            $ref: '#/definitions/response.Response'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Failed to update task
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Update a task
+      tags:
+      - tasks
+swagger: "2.0"
