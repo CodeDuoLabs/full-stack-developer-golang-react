@@ -1,8 +1,19 @@
 basePath: /
 definitions:
-  models.Task:
+  model.Task:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      status:
+        $ref: '#/definitions/model.TaskStatus'
+      updated_at:
+        type: string
     type: object
-  models.TaskStatus:
+  model.TaskStatus:
     enum:
     - Pending
     - Completed
@@ -10,7 +21,7 @@ definitions:
     x-enum-varnames:
     - StatusPending
     - StatusCompleted
-  response.Response:
+  task_manager_internal_response.Response:
     properties:
       data: {}
       error:
@@ -35,17 +46,17 @@ paths:
           description: List of tasks
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/task_manager_internal_response.Response'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/models.Task'
+                    $ref: '#/definitions/model.Task'
                   type: array
               type: object
         "500":
           description: Failed to retrieve tasks
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/task_manager_internal_response.Response'
       summary: List all tasks
       tags:
       - tasks
@@ -59,7 +70,7 @@ paths:
         name: task
         required: true
         schema:
-          $ref: '#/definitions/models.Task'
+          $ref: '#/definitions/model.Task'
       produces:
       - application/json
       responses:
@@ -67,19 +78,19 @@ paths:
           description: Created task
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/task_manager_internal_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Task'
+                  $ref: '#/definitions/model.Task'
               type: object
         "400":
           description: Invalid request payload
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/task_manager_internal_response.Response'
         "500":
           description: Failed to create task
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/task_manager_internal_response.Response'
       summary: Create a new task
       tags:
       - tasks
@@ -98,15 +109,15 @@ paths:
         "204":
           description: Task deleted successfully
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/task_manager_internal_response.Response'
         "404":
           description: Task not found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/task_manager_internal_response.Response'
         "500":
           description: Failed to delete task
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/task_manager_internal_response.Response'
       summary: Delete a task
       tags:
       - tasks
@@ -125,15 +136,15 @@ paths:
           description: Task details
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/task_manager_internal_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Task'
+                  $ref: '#/definitions/model.Task'
               type: object
         "404":
           description: Task not found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/task_manager_internal_response.Response'
       summary: Get a task
       tags:
       - tasks
@@ -152,7 +163,7 @@ paths:
         name: task
         required: true
         schema:
-          $ref: '#/definitions/models.Task'
+          $ref: '#/definitions/model.Task'
       produces:
       - application/json
       responses:
@@ -160,23 +171,23 @@ paths:
           description: Updated task
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/task_manager_internal_response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Task'
+                  $ref: '#/definitions/model.Task'
               type: object
         "400":
           description: Invalid request payload
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/task_manager_internal_response.Response'
         "404":
           description: Task not found
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/task_manager_internal_response.Response'
         "500":
           description: Failed to update task
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/task_manager_internal_response.Response'
       summary: Update a task
       tags:
       - tasks

@@ -4,12 +4,11 @@ import (
 	"log"
 	"task_manager/internal/database"
 	"task_manager/internal/routes"
-	"task_manager/models"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	_ "task_manager/docs"
+	_ "task_manager/cmd/docs"
 )
 
 // @title        Task Manager API
@@ -19,11 +18,12 @@ import (
 // @BasePath     /
 func main() {
 	db := database.InitDB()
-	db.AutoMigrate(&models.Task{})
 
 	r := gin.Default()
+
 	routes.SetupRoutes(r, db)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+
 	log.Println("Starting Api on :8080")
 
 	if err := r.Run(":8080"); err != nil {

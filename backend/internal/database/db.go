@@ -2,7 +2,7 @@ package database
 
 import (
 	"log"
-	"task_manager/models"
+	"task_manager/model"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -13,6 +13,6 @@ func InitDB() *gorm.DB {
 	if err != nil {
 		log.Fatal("Failed to connect to database")
 	}
-	db.AutoMigrate(&models.Task{})
+	db.AutoMigrate(&model.Task{})
 	return db
 }

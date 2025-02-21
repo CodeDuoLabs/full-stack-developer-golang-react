@@ -1,4 +1,4 @@
-package models
+package model
 
 import (
 	"errors"
@@ -21,7 +21,6 @@ type Task struct {
 	Status    TaskStatus     `gorm:"default:Pending" json:"status"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
-	DeletedAt gorm.DeletedAt `json:"deleted_at,omitempty"`
 }
 
 func (s TaskStatus) Validate() error {

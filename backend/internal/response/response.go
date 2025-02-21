@@ -1,10 +1,9 @@
 package response
 
-
 type Response struct {
-	Status int         `json:"status"`
-	Data   interface{} `json:"data"`
-	Error  string      `json:"error"`
+	Status int    `json:"status"`
+	Data   any    `json:"data"`
+	Error  string `json:"error"`
 }
 
 func NewSuccessResponse(status int, data interface{}) Response {
@@ -22,4 +21,3 @@ func NewErrorResponse(status int, errorMsg string) Response {
 		Error:  errorMsg,
 	}
 }
-

@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 	"task_manager/internal/response"
-	"task_manager/models"
+	"task_manager/model"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -19,14 +19,14 @@ func sendResponse(c *gin.Context, resp response.Response) {
 // @Tags         tasks
 // @Accept       json
 // @Produce      json
-// @Param        task  body      models.Task  true  "Task object to create"
-// @Success      201   {object}  response.Response{data=models.Task}  "Created task"
+// @Param        task  body      model.Task  true  "Task object to create"
+// @Success      201   {object}  response.Response{data=model.Task}  "Created task"
 // @Failure      400   {object}  response.Response  "Invalid request payload"
 // @Failure      500   {object}  response.Response  "Failed to create task"
 // @Router       /tasks [post]
 func CreateTaskHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var task models.Task
+		var task model.Task
 		if err := c.ShouldBindJSON(&task); err != nil {
 			sendResponse(c, response.NewErrorResponse(http.StatusBadRequest, err.Error()))
 			return
@@ -44,12 +44,12 @@ func CreateTaskHandler(db *gorm.DB) gin.HandlerFunc {
 // @Description  Retrieves a list of all tasks stored in the database.
 // @Tags         tasks
 // @Produce      json
-// @Success      200   {object}  response.Response{data=[]models.Task}  "List of tasks"
+// @Success      200   {object}  response.Response{data=[]model.Task}  "List of tasks"
 // @Failure      500   {object}  response.Response  "Failed to retrieve tasks"
 // @Router       /tasks [get]
 func GetTasksHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var tasks []models.Task
+		var tasks []model.Task
 		if err := db.Find(&tasks).Error; err != nil {
 			sendResponse(c, response.NewErrorResponse(http.StatusInternalServerError, "Failed to retrieve tasks"))
 			return
@@ -64,12 +64,12 @@ func GetTasksHandler(db *gorm.DB) gin.HandlerFunc {
 // @Tags         tasks
 // @Produce      json
 // @Param        id   path      string       true  "Task ID (UUID)"
-// @Success      200  {object}  response.Response{data=models.Task}  "Task details"
+// @Success      200  {object}  response.Response{data=model.Task}  "Task details"
 // @Failure      404  {object}  response.Response  "Task not found"
 // @Router       /tasks/{id} [get]
 func GetTaskHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var task models.Task
+		var task model.Task
 		if err := db.First(&task, c.Param("id")).Error; err != nil {
 			sendResponse(c, response.NewErrorResponse(http.StatusNotFound, "Task not found"))
 			return
@@ -85,15 +85,15 @@ func GetTaskHandler(db *gorm.DB) gin.HandlerFunc {
 // @Accept       json
 // @Produce      json
 // @Param        id    path      string       true  "Task ID (UUID)"
-// @Param        task  body      models.Task  true  "Updated task object"
-// @Success      200   {object}  response.Response{data=models.Task}  "Updated task"
+// @Param        task  body      model.Task  true  "Updated task object"
+// @Success      200   {object}  response.Response{data=model.Task}  "Updated task"
 // @Failure      400   {object}  response.Response  "Invalid request payload"
 // @Failure      404   {object}  response.Response  "Task not found"
 // @Failure      500   {object}  response.Response  "Failed to update task"
 // @Router       /tasks/{id} [put]
 func UpdateTaskHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var task models.Task
+		var task model.Task
 		if err := db.First(&task, c.Param("id")).Error; err != nil {
 			sendResponse(c, response.NewErrorResponse(http.StatusNotFound, "Task not found"))
 			return
@@ -122,7 +122,7 @@ func UpdateTaskHandler(db *gorm.DB) gin.HandlerFunc {
 // @Router       /tasks/{id} [delete]
 func DeleteTaskHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var task models.Task
+		var task model.Task
 		if err := db.First(&task, c.Param("id")).Error; err != nil {
 			sendResponse(c, response.NewErrorResponse(http.StatusNotFound, "Task not found"))
 			return
