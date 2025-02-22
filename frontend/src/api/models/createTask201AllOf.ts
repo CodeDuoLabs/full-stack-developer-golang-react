@@ -7,6 +7,6 @@
  */
 import type { ModelTask } from "./modelTask";
 
-export type GetTasksId200AllOf = {
+export type CreateTask201AllOf = {
   data?: ModelTask;
 };

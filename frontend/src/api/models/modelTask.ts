@@ -9,6 +9,7 @@ import type { ModelTaskStatus } from "./modelTaskStatus";
 
 export interface ModelTask {
   created_at?: string;
+  description?: string;
   id?: string;
   name?: string;
   status?: ModelTaskStatus;

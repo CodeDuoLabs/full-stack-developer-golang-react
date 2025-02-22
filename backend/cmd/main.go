@@ -1,16 +1,12 @@
 package main
 
 import (
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
+	"os"
 	_ "task_manager/cmd/docs"
 	"task_manager/internal/database"
-	"task_manager/internal/middleware"
-	"task_manager/internal/routes"
 
-	"github.com/gin-gonic/gin"
-	swaggerfiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 // @title        Task Manager API
@@ -20,18 +16,16 @@ import (
 // @BasePath     /
 func main() {
 	db := database.InitDB()
-
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-
-	r := gin.Default()
-	r.Use(middleware.CORSMiddleware())
-	routes.SetupRoutes(r, db)
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-
-	log.Print("Starting Api on :8080")
-
-	if err := r.Run(":8080"); err != nil {
-		log.Fatal().Err(err).Msg("Cannot initialize the server")
+	// var args []string
+	args := os.Args
+	if len(args) < 2 {
+		log.Fatal().Msg("Not enough argument")
 	}
-
+	switch args[1] {
+	case "api":
+		StartApi(db)
+	default:
+		log.Fatal().Msg("Don;t know what to do")
+	}
 }

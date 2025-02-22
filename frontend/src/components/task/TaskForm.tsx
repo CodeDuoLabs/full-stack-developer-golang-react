@@ -18,14 +18,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { usePostTasks, usePutTasksId } from "@/api/generated/taskManagerApis";
 import type { ModelTask } from "@/api/models/modelTask";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { queryClient } from "@/main";
+import { useCreateTask, useUpdateTask } from "@/api/generated/taskManagerApis";
 
 const taskSchema = z.object({
   name: z.string().min(1, "Task name is required").max(100),
+  description: z.string()
 });
 
 type TaskFormValues = z.infer<typeof taskSchema>;
@@ -44,13 +45,14 @@ export const TaskDialog = ({
   onSuccess,
 }: TaskDialogProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { mutateAsync: createTask } = usePostTasks();
-  const { mutateAsync: updateTask } = usePutTasksId();
+  const { mutateAsync: createTask } = useCreateTask();
+  const { mutateAsync: updateTask } = useUpdateTask();
 
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
       name: editTask?.name || "",
+      description: editTask?.description || "",
     },
   });
 
@@ -58,6 +60,7 @@ export const TaskDialog = ({
     if (!editTask) return;
     form.reset({
       name: editTask.name,
+      description: editTask.description
     });
   }, [editTask, form]);
 
@@ -114,6 +117,21 @@ export const TaskDialog = ({
                     </FormControl>
                     <FormMessage />
                   </FormItem>
+
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter task Description..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+
                 )}
               />
               <Button

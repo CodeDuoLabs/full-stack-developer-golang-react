@@ -1,8 +1,4 @@
-import {
-  useDeleteTasksId,
-  useGetTasks,
-  usePutTasksId,
-} from "@/api/generated/taskManagerApis";
+import { useDeleteTask, useListTasks, useUpdateTask } from "@/api/generated/taskManagerApis";
 import type { ModelTask } from "@/api/models/modelTask";
 import {
   Loader2,
@@ -10,6 +6,7 @@ import {
   Pencil,
   Trash2,
   ClipboardList,
+  Check,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -19,9 +16,9 @@ interface TaskListProps {
 }
 
 export const TaskList = ({ onEdit }: TaskListProps) => {
-  const { data: tasks, isLoading, refetch } = useGetTasks();
-  const { mutateAsync: deleteTask } = useDeleteTasksId();
-  const { mutateAsync: updateTask } = usePutTasksId();
+  const { data: tasks, isLoading, refetch } = useListTasks();
+  const { mutateAsync: deleteTask } = useDeleteTask();
+  const { mutateAsync: updateTask } = useUpdateTask();
 
   const toggleStatus = async (task: ModelTask) => {
     try {
@@ -85,20 +82,27 @@ export const TaskList = ({ onEdit }: TaskListProps) => {
           className="bg-white rounded-xl border border-gray-100 hover:border-indigo-100 transition-all duration-200 p-4 sm:p-5"
         >
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+
             <div className="flex-1 flex items-center gap-4">
-              <button
-                onClick={() => toggleStatus(task)}
-                className={cn(
-                  "w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105",
-                  task.status === "Completed" 
-                    ? "bg-indigo-600 hover:bg-indigo-700" 
-                    : "bg-gray-100 hover:bg-gray-200"
-                )}
-              >
-                {task.status === "Completed" && (
-                  <CheckCircle className="w-5 h-5 text-white" />
-                )}
-              </button>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only"
+                  checked={task.status === "Completed"}
+                  onChange={() => toggleStatus(task)}
+                />
+                <div className={cn(
+                  "w-5 h-5 flex items-center justify-center transition-all duration-200 ease-in-out border-2",
+                  task.status === "Completed"
+                    ? "bg-indigo-600 border-indigo-700"
+                    : "bg-gray-100 border-gray-300"
+                )}>
+                  {task.status === "Completed" && (
+                    <Check className="w-5 h-5 text-white" />
+                  )}
+                </div>
+
+              </label>
               <div className="flex-1">
                 <span
                   className={cn(

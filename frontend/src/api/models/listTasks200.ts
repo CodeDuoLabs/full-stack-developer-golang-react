@@ -6,7 +6,7 @@
  * OpenAPI spec version: 1.0
  */
 import type { TaskManagerInternalResponseResponse } from "./taskManagerInternalResponseResponse";
-import type { GetTasks200AllOf } from "./getTasks200AllOf";
+import type { ListTasks200AllOf } from "./listTasks200AllOf";
 
-export type GetTasks200 = TaskManagerInternalResponseResponse &
-  GetTasks200AllOf;
+export type ListTasks200 = TaskManagerInternalResponseResponse &
+  ListTasks200AllOf;
