@@ -43,7 +43,7 @@ go mod tidy
 
 ### For Swagger
 - Run the API server
-- Then head to <backend-url>/swagger/index.html
+- Then head to \<backend-url\>/swagger/index.html
 
 ## Frontend Setup (Vite React)
 
