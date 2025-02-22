@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 )
 
@@ -30,10 +31,14 @@ func CreateTaskHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var task model.Task
 		if err := c.ShouldBindJSON(&task); err != nil {
+
+			log.Err(err).Msg("Invalid payload")
 			sendResponse(c, response.NewErrorResponse(http.StatusBadRequest, err.Error()))
 			return
 		}
 		if err := db.Create(&task).Error; err != nil {
+
+			log.Err(err).Msg("Error creating task")
 			sendResponse(c, response.NewErrorResponse(http.StatusInternalServerError, "Failed to create task"))
 			return
 		}
@@ -54,6 +59,8 @@ func GetTasksHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var tasks []model.Task
 		if err := db.Find(&tasks).Error; err != nil {
+
+			log.Err(err).Msg("Error retreiving tasks")
 			sendResponse(c, response.NewErrorResponse(http.StatusInternalServerError, "Failed to retrieve tasks"))
 			return
 		}
@@ -77,9 +84,13 @@ func GetTaskHandler(db *gorm.DB) gin.HandlerFunc {
 
 		id, err := uuid.Parse(c.Param("id"))
 		if err != nil {
+
+			log.Err(err).Msg("Error parsing uuid")
 			sendResponse(c, response.NewErrorResponse(http.StatusBadRequest, "Invalid task id"))
 		}
 		if err := db.First(&task, id).Error; err != nil {
+
+			log.Err(err).Msg("Task not found")
 			sendResponse(c, response.NewErrorResponse(http.StatusNotFound, "Task not found"))
 			return
 		}
@@ -107,17 +118,25 @@ func UpdateTaskHandler(db *gorm.DB) gin.HandlerFunc {
 
 		id, err := uuid.Parse(c.Param("id"))
 		if err != nil {
+
+			log.Err(err).Msg("Error parsing uuid")
 			sendResponse(c, response.NewErrorResponse(http.StatusBadRequest, "Invalid task id"))
 		}
 		if err := db.First(&task, id).Error; err != nil {
+
+			log.Err(err).Msg("Task not found")
 			sendResponse(c, response.NewErrorResponse(http.StatusNotFound, "Task not found"))
 			return
 		}
 		if err := c.ShouldBindJSON(&task); err != nil {
+
+			log.Err(err).Msg("Error binding payload")
 			sendResponse(c, response.NewErrorResponse(http.StatusBadRequest, err.Error()))
 			return
 		}
 		if err := db.Save(&task).Error; err != nil {
+
+			log.Err(err).Msg("Failed to update Task")
 			sendResponse(c, response.NewErrorResponse(http.StatusInternalServerError, "Failed to update task"))
 			return
 		}
@@ -141,14 +160,17 @@ func DeleteTaskHandler(db *gorm.DB) gin.HandlerFunc {
 		var task model.Task
 		id, err := uuid.Parse(c.Param("id"))
 		if err != nil {
+			log.Err(err).Msg("Error parsing uuid")
 			sendResponse(c, response.NewErrorResponse(http.StatusBadRequest, "Invalid task id"))
 		}
 
 		if err := db.First(&task, id).Error; err != nil {
+			log.Err(err).Msg("Task not found")
 			sendResponse(c, response.NewErrorResponse(http.StatusNotFound, "Task not found"))
 			return
 		}
 		if err := db.Delete(&task).Error; err != nil {
+			log.Err(err).Msg("Failed to delete task")
 			sendResponse(c, response.NewErrorResponse(http.StatusInternalServerError, "Failed to delete task"))
 			return
 		}

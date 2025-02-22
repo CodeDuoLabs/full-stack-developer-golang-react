@@ -1,12 +1,12 @@
 package main
 
 import (
-	"log"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	_ "task_manager/cmd/docs"
 	"task_manager/internal/database"
 	"task_manager/internal/middleware"
 	"task_manager/internal/routes"
-
-	_ "task_manager/cmd/docs"
 
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
@@ -21,16 +21,17 @@ import (
 func main() {
 	db := database.InitDB()
 
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+
 	r := gin.Default()
 	r.Use(middleware.CORSMiddleware())
-
 	routes.SetupRoutes(r, db)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
-	log.Println("Starting Api on :8080")
+	log.Print("Starting Api on :8080")
 
 	if err := r.Run(":8080"); err != nil {
-		log.Fatal("Failed to initialize api server")
+		log.Fatal().Err(err).Msg("Cannot initialize the server")
 	}
 
 }

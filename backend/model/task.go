@@ -16,11 +16,13 @@ const (
 )
 
 type Task struct {
-	ID        uuid.UUID      `gorm:"type:uuid;primaryKey" json:"id"`
-	Name      string         `gorm:"not null" json:"name"`
-	Status    TaskStatus     `gorm:"default:Pending" json:"status"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
+	ID          uuid.UUID      `gorm:"type:uuid;primaryKey" json:"id"`
+	Name        string         `gorm:"not null" json:"name"`
+	Description string         `json:"description"`
+	Status      TaskStatus     `gorm:"default:Pending" json:"status"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
+	DeletedAt   gorm.DeletedAt `json:"-"`
 }
 
 func (s TaskStatus) Validate() error {
