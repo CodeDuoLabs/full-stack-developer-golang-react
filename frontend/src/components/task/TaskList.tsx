@@ -2,7 +2,6 @@ import { useDeleteTask, useListTasks, useUpdateTask } from "@/api/generated/task
 import type { ModelTask } from "@/api/models/modelTask";
 import {
   Loader2,
-  CheckCircle,
   Pencil,
   Trash2,
   ClipboardList,
@@ -62,7 +61,7 @@ export const TaskList = ({ onEdit }: TaskListProps) => {
 
   if (!tasks?.data?.length) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] bg-gray-50 rounded-xl p-8">
+      <div className="flex flex-col items-center justify-center min-h-[400px] rounded-xl p-8">
         <ClipboardList className="h-20 w-20 text-indigo-200 mb-6" />
         <h3 className="text-2xl font-semibold text-gray-800 mb-3">
           Your task list is empty

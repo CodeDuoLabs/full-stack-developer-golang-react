@@ -20,7 +20,7 @@ export const TaskManager = () => {
   };
 
   return (
-<div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+    <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
       <div className="space-y-8">
         <header className="flex flex-col sm:flex-row justify-between items-center gap-6 pb-6 border-b border-gray-100">
           <div>
