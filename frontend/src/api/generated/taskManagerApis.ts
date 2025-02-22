@@ -19,8 +19,6 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from "@tanstack/react-query";
-import * as axios from "axios";
-import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import type {
   GetTasks200,
   GetTasksId200,
@@ -29,37 +27,35 @@ import type {
   PutTasksId200,
   TaskManagerInternalResponseResponse,
 } from "../models";
+import { customInstance } from "../client/apiClient";
 
 /**
  * Retrieves a list of all tasks stored in the database.
  * @summary List all tasks
  */
-export const getTasks = (
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<GetTasks200>> => {
-  return axios.default.get(`http://localhost:8080/tasks`, options);
+export const getTasks = (signal?: AbortSignal) => {
+  return customInstance<GetTasks200>({ url: `/tasks`, method: "GET", signal });
 };
 
 export const getGetTasksQueryKey = () => {
-  return [`http://localhost:8080/tasks`] as const;
+  return [`/tasks`] as const;
 };
 
 export const getGetTasksQueryOptions = <
   TData = Awaited<ReturnType<typeof getTasks>>,
-  TError = AxiosError<TaskManagerInternalResponseResponse>,
+  TError = TaskManagerInternalResponseResponse,
 >(options?: {
   query?: Partial<
     UseQueryOptions<Awaited<ReturnType<typeof getTasks>>, TError, TData>
   >;
-  axios?: AxiosRequestConfig;
 }) => {
-  const { query: queryOptions, axios: axiosOptions } = options ?? {};
+  const { query: queryOptions } = options ?? {};
 
   const queryKey = queryOptions?.queryKey ?? getGetTasksQueryKey();
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof getTasks>>> = ({
     signal,
-  }) => getTasks({ signal, ...axiosOptions });
+  }) => getTasks(signal);
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof getTasks>>,
@@ -71,12 +67,11 @@ export const getGetTasksQueryOptions = <
 export type GetTasksQueryResult = NonNullable<
   Awaited<ReturnType<typeof getTasks>>
 >;
-export type GetTasksQueryError =
-  AxiosError<TaskManagerInternalResponseResponse>;
+export type GetTasksQueryError = TaskManagerInternalResponseResponse;
 
 export function useGetTasks<
   TData = Awaited<ReturnType<typeof getTasks>>,
-  TError = AxiosError<TaskManagerInternalResponseResponse>,
+  TError = TaskManagerInternalResponseResponse,
 >(options: {
   query: Partial<
     UseQueryOptions<Awaited<ReturnType<typeof getTasks>>, TError, TData>
@@ -89,13 +84,12 @@ export function useGetTasks<
       >,
       "initialData"
     >;
-  axios?: AxiosRequestConfig;
 }): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 export function useGetTasks<
   TData = Awaited<ReturnType<typeof getTasks>>,
-  TError = AxiosError<TaskManagerInternalResponseResponse>,
+  TError = TaskManagerInternalResponseResponse,
 >(options?: {
   query?: Partial<
     UseQueryOptions<Awaited<ReturnType<typeof getTasks>>, TError, TData>
@@ -108,18 +102,16 @@ export function useGetTasks<
       >,
       "initialData"
     >;
-  axios?: AxiosRequestConfig;
 }): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 export function useGetTasks<
   TData = Awaited<ReturnType<typeof getTasks>>,
-  TError = AxiosError<TaskManagerInternalResponseResponse>,
+  TError = TaskManagerInternalResponseResponse,
 >(options?: {
   query?: Partial<
     UseQueryOptions<Awaited<ReturnType<typeof getTasks>>, TError, TData>
   >;
-  axios?: AxiosRequestConfig;
 }): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
@@ -129,12 +121,11 @@ export function useGetTasks<
 
 export function useGetTasks<
   TData = Awaited<ReturnType<typeof getTasks>>,
-  TError = AxiosError<TaskManagerInternalResponseResponse>,
+  TError = TaskManagerInternalResponseResponse,
 >(options?: {
   query?: Partial<
     UseQueryOptions<Awaited<ReturnType<typeof getTasks>>, TError, TData>
   >;
-  axios?: AxiosRequestConfig;
 }): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 } {
@@ -153,15 +144,18 @@ export function useGetTasks<
  * Creates a task with the provided name and status.
  * @summary Create a new task
  */
-export const postTasks = (
-  modelTask: ModelTask,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PostTasks201>> => {
-  return axios.default.post(`http://localhost:8080/tasks`, modelTask, options);
+export const postTasks = (modelTask: ModelTask, signal?: AbortSignal) => {
+  return customInstance<PostTasks201>({
+    url: `/tasks`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: modelTask,
+    signal,
+  });
 };
 
 export const getPostTasksMutationOptions = <
-  TError = AxiosError<TaskManagerInternalResponseResponse>,
+  TError = TaskManagerInternalResponseResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -170,7 +164,6 @@ export const getPostTasksMutationOptions = <
     { data: ModelTask },
     TContext
   >;
-  axios?: AxiosRequestConfig;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof postTasks>>,
   TError,
@@ -178,13 +171,13 @@ export const getPostTasksMutationOptions = <
   TContext
 > => {
   const mutationKey = ["postTasks"];
-  const { mutation: mutationOptions, axios: axiosOptions } = options
+  const { mutation: mutationOptions } = options
     ? options.mutation &&
       "mutationKey" in options.mutation &&
       options.mutation.mutationKey
       ? options
       : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, axios: undefined };
+    : { mutation: { mutationKey } };
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof postTasks>>,
@@ -192,7 +185,7 @@ export const getPostTasksMutationOptions = <
   > = (props) => {
     const { data } = props ?? {};
 
-    return postTasks(data, axiosOptions);
+    return postTasks(data);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -202,14 +195,13 @@ export type PostTasksMutationResult = NonNullable<
   Awaited<ReturnType<typeof postTasks>>
 >;
 export type PostTasksMutationBody = ModelTask;
-export type PostTasksMutationError =
-  AxiosError<TaskManagerInternalResponseResponse>;
+export type PostTasksMutationError = TaskManagerInternalResponseResponse;
 
 /**
  * @summary Create a new task
  */
 export const usePostTasks = <
-  TError = AxiosError<TaskManagerInternalResponseResponse>,
+  TError = TaskManagerInternalResponseResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -218,7 +210,6 @@ export const usePostTasks = <
     { data: ModelTask },
     TContext
   >;
-  axios?: AxiosRequestConfig;
 }): UseMutationResult<
   Awaited<ReturnType<typeof postTasks>>,
   TError,
@@ -234,36 +225,36 @@ export const usePostTasks = <
  * Retrieves a task by its unique identifier.
  * @summary Get a task
  */
-export const getTasksId = (
-  id: string,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<GetTasksId200>> => {
-  return axios.default.get(`http://localhost:8080/tasks/${id}`, options);
+export const getTasksId = (id: string, signal?: AbortSignal) => {
+  return customInstance<GetTasksId200>({
+    url: `/tasks/${id}`,
+    method: "GET",
+    signal,
+  });
 };
 
 export const getGetTasksIdQueryKey = (id: string) => {
-  return [`http://localhost:8080/tasks/${id}`] as const;
+  return [`/tasks/${id}`] as const;
 };
 
 export const getGetTasksIdQueryOptions = <
   TData = Awaited<ReturnType<typeof getTasksId>>,
-  TError = AxiosError<TaskManagerInternalResponseResponse>,
+  TError = TaskManagerInternalResponseResponse,
 >(
   id: string,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getTasksId>>, TError, TData>
     >;
-    axios?: AxiosRequestConfig;
   },
 ) => {
-  const { query: queryOptions, axios: axiosOptions } = options ?? {};
+  const { query: queryOptions } = options ?? {};
 
   const queryKey = queryOptions?.queryKey ?? getGetTasksIdQueryKey(id);
 
   const queryFn: QueryFunction<Awaited<ReturnType<typeof getTasksId>>> = ({
     signal,
-  }) => getTasksId(id, { signal, ...axiosOptions });
+  }) => getTasksId(id, signal);
 
   return {
     queryKey,
@@ -280,12 +271,11 @@ export const getGetTasksIdQueryOptions = <
 export type GetTasksIdQueryResult = NonNullable<
   Awaited<ReturnType<typeof getTasksId>>
 >;
-export type GetTasksIdQueryError =
-  AxiosError<TaskManagerInternalResponseResponse>;
+export type GetTasksIdQueryError = TaskManagerInternalResponseResponse;
 
 export function useGetTasksId<
   TData = Awaited<ReturnType<typeof getTasksId>>,
-  TError = AxiosError<TaskManagerInternalResponseResponse>,
+  TError = TaskManagerInternalResponseResponse,
 >(
   id: string,
   options: {
@@ -300,14 +290,13 @@ export function useGetTasksId<
         >,
         "initialData"
       >;
-    axios?: AxiosRequestConfig;
   },
 ): DefinedUseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 export function useGetTasksId<
   TData = Awaited<ReturnType<typeof getTasksId>>,
-  TError = AxiosError<TaskManagerInternalResponseResponse>,
+  TError = TaskManagerInternalResponseResponse,
 >(
   id: string,
   options?: {
@@ -322,21 +311,19 @@ export function useGetTasksId<
         >,
         "initialData"
       >;
-    axios?: AxiosRequestConfig;
   },
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
 };
 export function useGetTasksId<
   TData = Awaited<ReturnType<typeof getTasksId>>,
-  TError = AxiosError<TaskManagerInternalResponseResponse>,
+  TError = TaskManagerInternalResponseResponse,
 >(
   id: string,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getTasksId>>, TError, TData>
     >;
-    axios?: AxiosRequestConfig;
   },
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
@@ -347,14 +334,13 @@ export function useGetTasksId<
 
 export function useGetTasksId<
   TData = Awaited<ReturnType<typeof getTasksId>>,
-  TError = AxiosError<TaskManagerInternalResponseResponse>,
+  TError = TaskManagerInternalResponseResponse,
 >(
   id: string,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getTasksId>>, TError, TData>
     >;
-    axios?: AxiosRequestConfig;
   },
 ): UseQueryResult<TData, TError> & {
   queryKey: DataTag<QueryKey, TData, TError>;
@@ -374,20 +360,17 @@ export function useGetTasksId<
  * Updates the details of a task identified by its ID.
  * @summary Update a task
  */
-export const putTasksId = (
-  id: string,
-  modelTask: ModelTask,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<PutTasksId200>> => {
-  return axios.default.put(
-    `http://localhost:8080/tasks/${id}`,
-    modelTask,
-    options,
-  );
+export const putTasksId = (id: string, modelTask: ModelTask) => {
+  return customInstance<PutTasksId200>({
+    url: `/tasks/${id}`,
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    data: modelTask,
+  });
 };
 
 export const getPutTasksIdMutationOptions = <
-  TError = AxiosError<TaskManagerInternalResponseResponse>,
+  TError = TaskManagerInternalResponseResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -396,7 +379,6 @@ export const getPutTasksIdMutationOptions = <
     { id: string; data: ModelTask },
     TContext
   >;
-  axios?: AxiosRequestConfig;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof putTasksId>>,
   TError,
@@ -404,13 +386,13 @@ export const getPutTasksIdMutationOptions = <
   TContext
 > => {
   const mutationKey = ["putTasksId"];
-  const { mutation: mutationOptions, axios: axiosOptions } = options
+  const { mutation: mutationOptions } = options
     ? options.mutation &&
       "mutationKey" in options.mutation &&
       options.mutation.mutationKey
       ? options
       : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, axios: undefined };
+    : { mutation: { mutationKey } };
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof putTasksId>>,
@@ -418,7 +400,7 @@ export const getPutTasksIdMutationOptions = <
   > = (props) => {
     const { id, data } = props ?? {};
 
-    return putTasksId(id, data, axiosOptions);
+    return putTasksId(id, data);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -428,14 +410,13 @@ export type PutTasksIdMutationResult = NonNullable<
   Awaited<ReturnType<typeof putTasksId>>
 >;
 export type PutTasksIdMutationBody = ModelTask;
-export type PutTasksIdMutationError =
-  AxiosError<TaskManagerInternalResponseResponse>;
+export type PutTasksIdMutationError = TaskManagerInternalResponseResponse;
 
 /**
  * @summary Update a task
  */
 export const usePutTasksId = <
-  TError = AxiosError<TaskManagerInternalResponseResponse>,
+  TError = TaskManagerInternalResponseResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -444,7 +425,6 @@ export const usePutTasksId = <
     { id: string; data: ModelTask },
     TContext
   >;
-  axios?: AxiosRequestConfig;
 }): UseMutationResult<
   Awaited<ReturnType<typeof putTasksId>>,
   TError,
@@ -460,15 +440,15 @@ export const usePutTasksId = <
  * Deletes a task identified by its unique identifier.
  * @summary Delete a task
  */
-export const deleteTasksId = (
-  id: string,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<TaskManagerInternalResponseResponse>> => {
-  return axios.default.delete(`http://localhost:8080/tasks/${id}`, options);
+export const deleteTasksId = (id: string) => {
+  return customInstance<TaskManagerInternalResponseResponse>({
+    url: `/tasks/${id}`,
+    method: "DELETE",
+  });
 };
 
 export const getDeleteTasksIdMutationOptions = <
-  TError = AxiosError<TaskManagerInternalResponseResponse>,
+  TError = TaskManagerInternalResponseResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -477,7 +457,6 @@ export const getDeleteTasksIdMutationOptions = <
     { id: string },
     TContext
   >;
-  axios?: AxiosRequestConfig;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof deleteTasksId>>,
   TError,
@@ -485,13 +464,13 @@ export const getDeleteTasksIdMutationOptions = <
   TContext
 > => {
   const mutationKey = ["deleteTasksId"];
-  const { mutation: mutationOptions, axios: axiosOptions } = options
+  const { mutation: mutationOptions } = options
     ? options.mutation &&
       "mutationKey" in options.mutation &&
       options.mutation.mutationKey
       ? options
       : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, axios: undefined };
+    : { mutation: { mutationKey } };
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof deleteTasksId>>,
@@ -499,7 +478,7 @@ export const getDeleteTasksIdMutationOptions = <
   > = (props) => {
     const { id } = props ?? {};
 
-    return deleteTasksId(id, axiosOptions);
+    return deleteTasksId(id);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -509,14 +488,13 @@ export type DeleteTasksIdMutationResult = NonNullable<
   Awaited<ReturnType<typeof deleteTasksId>>
 >;
 
-export type DeleteTasksIdMutationError =
-  AxiosError<TaskManagerInternalResponseResponse>;
+export type DeleteTasksIdMutationError = TaskManagerInternalResponseResponse;
 
 /**
  * @summary Delete a task
  */
 export const useDeleteTasksId = <
-  TError = AxiosError<TaskManagerInternalResponseResponse>,
+  TError = TaskManagerInternalResponseResponse,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -525,7 +503,6 @@ export const useDeleteTasksId = <
     { id: string },
     TContext
   >;
-  axios?: AxiosRequestConfig;
 }): UseMutationResult<
   Awaited<ReturnType<typeof deleteTasksId>>,
   TError,

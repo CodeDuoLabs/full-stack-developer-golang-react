@@ -13,13 +13,12 @@ export default defineConfig({
       prettier: true,
       clean: true,
       override: {
-        fetch: {
-          includeHttpResponseReturnType: false,
+        mutator: {
+          path: './src/api/client/apiClient.ts',
+          name: 'customInstance',
         },
       },
-      baseUrl: `${process.env.API_URL}`,
-      allParamsOptional: false,
-      unionAddMissingProperties: true,
+      // baseUrl: `${process.env.API_URL}`,
     },
     input: {
       target: `${process.env.SWAGGER_URL}`,

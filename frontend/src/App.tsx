@@ -1,10 +1,15 @@
-import './App.css'
-import { TaskList } from './components/TaskList'
+import { Toaster } from "sonner";
+import { TaskManager } from "./components/task";
 
 function App() {
   return (
-    <TaskList />
-  )
+    <div className="min-h-screen bg-gradient-to-br from-rose-100 to-teal-100 p-4 md:p-8">
+      <div className="max-w-5xl mx-auto">
+        <TaskManager />
+      </div>
+      <Toaster position="top-center" expand={true} richColors />
+    </div>
+  );
 }
 
-export default App
+export default App;

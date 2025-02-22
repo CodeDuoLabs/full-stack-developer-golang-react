@@ -6,6 +6,7 @@ import (
 	"task_manager/model"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -24,6 +25,7 @@ func sendResponse(c *gin.Context, resp response.Response) {
 // @Failure      400   {object}  response.Response  "Invalid request payload"
 // @Failure      500   {object}  response.Response  "Failed to create task"
 // @Router       /tasks [post]
+// @ID CreateTask
 func CreateTaskHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var task model.Task
@@ -47,6 +49,7 @@ func CreateTaskHandler(db *gorm.DB) gin.HandlerFunc {
 // @Success      200   {object}  response.Response{data=[]model.Task}  "List of tasks"
 // @Failure      500   {object}  response.Response  "Failed to retrieve tasks"
 // @Router       /tasks [get]
+// @ID ListTasks
 func GetTasksHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var tasks []model.Task
@@ -67,10 +70,16 @@ func GetTasksHandler(db *gorm.DB) gin.HandlerFunc {
 // @Success      200  {object}  response.Response{data=model.Task}  "Task details"
 // @Failure      404  {object}  response.Response  "Task not found"
 // @Router       /tasks/{id} [get]
+// @ID GetTaskByID
 func GetTaskHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var task model.Task
-		if err := db.First(&task, c.Param("id")).Error; err != nil {
+
+		id, err := uuid.Parse(c.Param("id"))
+		if err != nil {
+			sendResponse(c, response.NewErrorResponse(http.StatusBadRequest, "Invalid task id"))
+		}
+		if err := db.First(&task, id).Error; err != nil {
 			sendResponse(c, response.NewErrorResponse(http.StatusNotFound, "Task not found"))
 			return
 		}
@@ -91,10 +100,16 @@ func GetTaskHandler(db *gorm.DB) gin.HandlerFunc {
 // @Failure      404   {object}  response.Response  "Task not found"
 // @Failure      500   {object}  response.Response  "Failed to update task"
 // @Router       /tasks/{id} [put]
+// @ID UpdateTask
 func UpdateTaskHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var task model.Task
-		if err := db.First(&task, c.Param("id")).Error; err != nil {
+
+		id, err := uuid.Parse(c.Param("id"))
+		if err != nil {
+			sendResponse(c, response.NewErrorResponse(http.StatusBadRequest, "Invalid task id"))
+		}
+		if err := db.First(&task, id).Error; err != nil {
 			sendResponse(c, response.NewErrorResponse(http.StatusNotFound, "Task not found"))
 			return
 		}
@@ -120,10 +135,16 @@ func UpdateTaskHandler(db *gorm.DB) gin.HandlerFunc {
 // @Failure      404  {object}  response.Response  "Task not found"
 // @Failure      500  {object}  response.Response  "Failed to delete task"
 // @Router       /tasks/{id} [delete]
+// @ID DeleteTask
 func DeleteTaskHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var task model.Task
-		if err := db.First(&task, c.Param("id")).Error; err != nil {
+		id, err := uuid.Parse(c.Param("id"))
+		if err != nil {
+			sendResponse(c, response.NewErrorResponse(http.StatusBadRequest, "Invalid task id"))
+		}
+
+		if err := db.First(&task, id).Error; err != nil {
 			sendResponse(c, response.NewErrorResponse(http.StatusNotFound, "Task not found"))
 			return
 		}

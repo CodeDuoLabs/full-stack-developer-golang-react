@@ -39,6 +39,7 @@ paths:
   /tasks:
     get:
       description: Retrieves a list of all tasks stored in the database.
+      operationId: ListTasks
       produces:
       - application/json
       responses:
@@ -64,6 +65,7 @@ paths:
       consumes:
       - application/json
       description: Creates a task with the provided name and status.
+      operationId: CreateTask
       parameters:
       - description: Task object to create
         in: body
@@ -97,6 +99,7 @@ paths:
   /tasks/{id}:
     delete:
       description: Deletes a task identified by its unique identifier.
+      operationId: DeleteTask
       parameters:
       - description: Task ID (UUID)
         in: path
@@ -123,6 +126,7 @@ paths:
       - tasks
     get:
       description: Retrieves a task by its unique identifier.
+      operationId: GetTaskByID
       parameters:
       - description: Task ID (UUID)
         in: path
@@ -152,6 +156,7 @@ paths:
       consumes:
       - application/json
       description: Updates the details of a task identified by its ID.
+      operationId: UpdateTask
       parameters:
       - description: Task ID (UUID)
         in: path

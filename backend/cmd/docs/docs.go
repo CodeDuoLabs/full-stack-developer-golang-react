@@ -25,6 +25,7 @@ const docTemplate = `{
                     "tasks"
                 ],
                 "summary": "List all tasks",
+                "operationId": "ListTasks",
                 "responses": {
                     "200": {
                         "description": "List of tasks",
@@ -67,6 +68,7 @@ const docTemplate = `{
                     "tasks"
                 ],
                 "summary": "Create a new task",
+                "operationId": "CreateTask",
                 "parameters": [
                     {
                         "description": "Task object to create",
@@ -122,6 +124,7 @@ const docTemplate = `{
                     "tasks"
                 ],
                 "summary": "Get a task",
+                "operationId": "GetTaskByID",
                 "parameters": [
                     {
                         "type": "string",
@@ -170,6 +173,7 @@ const docTemplate = `{
                     "tasks"
                 ],
                 "summary": "Update a task",
+                "operationId": "UpdateTask",
                 "parameters": [
                     {
                         "type": "string",
@@ -236,6 +240,7 @@ const docTemplate = `{
                     "tasks"
                 ],
                 "summary": "Delete a task",
+                "operationId": "DeleteTask",
                 "parameters": [
                     {
                         "type": "string",

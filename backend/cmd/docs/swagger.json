@@ -19,6 +19,7 @@
                     "tasks"
                 ],
                 "summary": "List all tasks",
+                "operationId": "ListTasks",
                 "responses": {
                     "200": {
                         "description": "List of tasks",
@@ -61,6 +62,7 @@
                     "tasks"
                 ],
                 "summary": "Create a new task",
+                "operationId": "CreateTask",
                 "parameters": [
                     {
                         "description": "Task object to create",
@@ -116,6 +118,7 @@
                     "tasks"
                 ],
                 "summary": "Get a task",
+                "operationId": "GetTaskByID",
                 "parameters": [
                     {
                         "type": "string",
@@ -164,6 +167,7 @@
                     "tasks"
                 ],
                 "summary": "Update a task",
+                "operationId": "UpdateTask",
                 "parameters": [
                     {
                         "type": "string",
@@ -230,6 +234,7 @@
                     "tasks"
                 ],
                 "summary": "Delete a task",
+                "operationId": "DeleteTask",
                 "parameters": [
                     {
                         "type": "string",
