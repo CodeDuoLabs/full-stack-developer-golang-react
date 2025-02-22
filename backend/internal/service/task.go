@@ -51,3 +51,12 @@ func (s *TaskService) DeleteTask(id uuid.UUID) error {
 	}
 	return nil
 }
+
+func (s *TaskService) GetPendingTasks() ([]model.Task, error) {
+	var tasks []model.Task
+	err := s.db.Where("status = ?", model.StatusPending).Find(&tasks).Error
+	if err != nil {
+		return nil, err
+	}
+	return tasks, nil
+}
