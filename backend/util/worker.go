@@ -20,7 +20,7 @@ type Worker struct {
 func NewWorker(workers int, taskService service.TaskService) *Worker {
 	return &Worker{
 		workers:     workers,
-		channel:     make(chan uuid.UUID),
+		channel:     make(chan uuid.UUID, 50),
 		taskService: taskService,
 	}
 }
