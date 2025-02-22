@@ -4,7 +4,7 @@ This project is a task management system with a Go backend and a Vite-based Reac
 
 ## Initial Step
 Unzip or clone the project
->>> There should be two folder `frontend/` and `backend`
+> There should be two folder `frontend/` and `backend`
 
 ## Backend Setup (Go)
 
