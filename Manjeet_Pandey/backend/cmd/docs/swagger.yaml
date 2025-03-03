@@ -1,0 +1,201 @@
+basePath: /
+definitions:
+  model.Task:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      status:
+        $ref: '#/definitions/model.TaskStatus'
+      updated_at:
+        type: string
+    type: object
+  model.TaskStatus:
+    enum:
+    - Pending
+    - Completed
+    type: string
+    x-enum-varnames:
+    - StatusPending
+    - StatusCompleted
+  task_manager_internal_response.Response:
+    properties:
+      data: {}
+      error:
+        type: string
+      status:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: A simple task management API built with Go and Gin.
+  title: Task Manager API
+  version: "1.0"
+paths:
+  /tasks:
+    get:
+      description: Retrieves a list of all tasks stored in the database.
+      operationId: ListTasks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of tasks
+          schema:
+            allOf:
+            - $ref: '#/definitions/task_manager_internal_response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Task'
+                  type: array
+              type: object
+        "500":
+          description: Failed to retrieve tasks
+          schema:
+            $ref: '#/definitions/task_manager_internal_response.Response'
+      summary: List all tasks
+      tags:
+      - tasks
+    post:
+      consumes:
+      - application/json
+      description: Creates a task with the provided name and status.
+      operationId: CreateTask
+      parameters:
+      - description: Task object to create
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/model.Task'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created task
+          schema:
+            allOf:
+            - $ref: '#/definitions/task_manager_internal_response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Task'
+              type: object
+        "400":
+          description: Invalid request payload
+          schema:
+            $ref: '#/definitions/task_manager_internal_response.Response'
+        "500":
+          description: Failed to create task
+          schema:
+            $ref: '#/definitions/task_manager_internal_response.Response'
+      summary: Create a new task
+      tags:
+      - tasks
+  /tasks/{id}:
+    delete:
+      description: Deletes a task identified by its unique identifier.
+      operationId: DeleteTask
+      parameters:
+      - description: Task ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Task deleted successfully
+          schema:
+            $ref: '#/definitions/task_manager_internal_response.Response'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/task_manager_internal_response.Response'
+        "500":
+          description: Failed to delete task
+          schema:
+            $ref: '#/definitions/task_manager_internal_response.Response'
+      summary: Delete a task
+      tags:
+      - tasks
+    get:
+      description: Retrieves a task by its unique identifier.
+      operationId: GetTaskByID
+      parameters:
+      - description: Task ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task details
+          schema:
+            allOf:
+            - $ref: '#/definitions/task_manager_internal_response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Task'
+              type: object
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/task_manager_internal_response.Response'
+      summary: Get a task
+      tags:
+      - tasks
+    put:
+      consumes:
+      - application/json
+      description: Updates the details of a task identified by its ID.
+      operationId: UpdateTask
+      parameters:
+      - description: Task ID (UUID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated task object
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/model.Task'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated task
+          schema:
+            allOf:
+            - $ref: '#/definitions/task_manager_internal_response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Task'
+              type: object
+        "400":
+          description: Invalid request payload
+          schema:
+            $ref: '#/definitions/task_manager_internal_response.Response'
+        "404":
+          description: Task not found
+          schema:
+            $ref: '#/definitions/task_manager_internal_response.Response'
+        "500":
+          description: Failed to update task
+          schema:
+            $ref: '#/definitions/task_manager_internal_response.Response'
+      summary: Update a task
+      tags:
+      - tasks
+swagger: "2.0"
